@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="shortcut icon" href="assets/auflare.svg" type="image/x-icon">
+    <title>Deep</title>
+</head>
+<body>
+    <div class="logs"></div>
+    <div class="sidebar">
+        <h3 style="margin: 0.5rem 0 1rem 0">Input Method</h3>
+        <div class="list-item" onclick="setting('sketch')">
+            <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; height: 1.2rem; width: 1.2rem; margin-right: 2rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+            Sketch
+        </div>
+        <div class="list-item" onclick="setting('text')">
+            <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; height: 1.2rem; width: 1.2rem; margin-right: 2rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+            Text
+        </div>
+        <hr>
+        <div class="flex">
+            Brush size:
+            <span id="brush_rangevalue"></span>
+            <input type="range" step="1" min="1" max="250" value="50" id="brush_size"> 
+        </div>
+        
+        <div class="hidden">
+            <hr>
+            <div class="flex">
+                Tolerance:
+                <span id="magicwand_rangevalue"></span>
+                <input type="range" step="1" min="1" max="250" value="50" id="magicwand_tol"> 
+            </div>
+            <hr>
+            <th><button id="example0" class="btn example0"></button></th>
+            <th><button id="example1" class="btn example1"></button></th>
+            <th><button id="example2" class="btn example2"></button></th>
+            <th><button id="example3" class="btn example3"></button></th>
+            <th><button id="example4" class="btn example4"></button></th>
+            <th><button id="example5" class="btn example5"></button></th>
+            <th><button id="example6" class="btn example6"></button></th>
+            <th><button id="example7" class="btn example7"></button></th>
+            <th><button id="example8" class="btn example8"></button></th>
+            <th><button id="example9" class="btn example9"></button></th>
+            <th><button id="example10" class="btn example10"></button></th>
+
+            <h4>Input visualization:</h4>
+            <h3>
+                <input type="checkbox" id="vis_seg" name="vis_seg" onclick="visSegOnClickHandler()" checked>
+                <label for="vis_seg">Segmentation</label>
+            </h3>
+            <h3>
+                <input type="checkbox" id="vis_edge" name="vis_edge" onclick="visEdgeOnClickHandler()" checked>
+                <label for="vis_edge">Sketch </label>
+            </h3>
+            <h3>
+                <input type="checkbox" id="vis_image" name="vis_image" onclick="visImageOnClickHandler()">
+                <label for="vis_image">Image </label>
+            </h3>
+            <h4>Input utilization:</h4>
+            <h3>
+                <input type="checkbox" id="enable_seg" name="enable_seg" checked>
+                <label for="segmap">Segmentation </label>
+            </h3>
+            <h3>
+                <input type="checkbox" id="enable_edge" name="enable_edge" checked>
+                <label for="edge">Sketch </label>
+            </h3>
+            <h3>
+                <input type="checkbox" id="enable_image" name="enable_image">
+                <label for="image">Image </label>
+            </h3>
+            <h3>
+                <input type="checkbox" id="enable_text" name="enable_text">
+                <label for="text">Text </label>
+            </h3>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <a id="render" onclick="log('warning', 'Rendering..', `Rendering from sketch..`, '.logs')" href="#output"><svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; width: 100%; height: 100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></a>
+        <hr>
+        <h2>Draw</h2>
+        <div style="display: flex; justify-content: space-between">
+            <button onclick="reset()" class="tool">
+                <span id="new" style="display: none"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+            <button class="tool" onclick="document.getElementById('undo').click()">
+                <span id="undo" style="display: none"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+            </button>
+        </div>
+
+        <button id="brush">Brush</button>
+        <button id="fill">Fill</button>
+        <button id="pencil">Pencil</button>
+        <button id="eraser">Eraser</button>
+        
+        <div style="display: flex; justify-content: space-between">
+            <a id="download">
+                <button class="tool">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </button>
+            </a>
+            <button class="tool" onclick="document.getElementById('copy').click()">
+                <span id="copy" style="display: none"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <input class="input" placeholder="Text to image input" type="text" id="text_input">
+        <div id="sketch-container">                
+            <h2>New Sketch</h2>
+            <div id="category">
+                <button class="btncat cat-bldg">
+                    <h3>Building</h3>
+                </button>
+                <button class="btncat cat-ground">
+                    <h3>Ground</h3>
+                </button>
+                <button class="btncat cat-landscape cat-active">
+                    <h3>Landscape</h3>
+                </button>
+                <button class="btncat cat-plant">
+                    <h3>Plant</h3>
+                </button>
+            </div>
+            <div id="palette"></div>
+            <canvas id="viewport" style="touch-action: none"></canvas>
+        </div>
+        <p style="border: 0" class="subtitle">Output</p>
+        <canvas id="output"></canvas>
+    </div>
+    <script src="assets/jquery.min.js"></script>
+    <script src="assets/log.js"></script>
+    <script src="assets/menu.js"></script>
+    <script src="assets/ob.js"></script>
+    <script>
+        document.getElementById('category').firstElementChild.click()
+    </script>
+</body>
+</html>
