@@ -4,7 +4,7 @@ if (typeof(Storage) !== "undefined") {
   }
 }
 function redirect() {
-  if (localStorage.getItem("redirect") === "true") window.location.href = "/"
+  if (localStorage.getItem("redirect") === "true") window.location.href = "https://www.auflare.co"
 }
 document.querySelector('#next').addEventListener('click', function() {
   localStorage.setItem("redirect", "true"); redirect() 
